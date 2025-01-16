@@ -7,13 +7,15 @@
       md="4"
       class="pa-1"
     >
-      <preview
-        :face-pid="previewItem.face_pid"
-        :quick-look-pid="previewItem.quick_look_pid"
-        :video-name="previewItem.name"
-        :age="previewItem.age"
-        :duration="previewItem.duration"
-      />
+      <a :href="'/video/'+previewItem.video_pid">
+        <preview
+          :face-pid="previewItem.face_pid"
+          :quick-look-pid="previewItem.quick_look_pid"
+          :video-name="previewItem.name"
+          :age="previewItem.age"
+          :duration="previewItem.duration"
+        />
+      </a>
       <div
         v-if="previewIndex >= previewArray.length-3"
         v-intersect="onIntersect"
@@ -56,8 +58,5 @@ const onIntersect = (entry) => {
   if (entry && !pageLoading.value && !exhaustedMark.value) {
     fetcher()
   }
-
 }
-
-
 </script>
