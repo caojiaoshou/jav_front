@@ -33,7 +33,7 @@ const videoUrl = computed(() => {
 })
 
 const age = computed(() => {
-  return Math.round(props.age)
+  return Math.round(props.age).toString()
 })
 
 
