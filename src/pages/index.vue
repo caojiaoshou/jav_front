@@ -3,8 +3,10 @@
     <v-col
       v-for="(previewItem,previewIndex) in previewArray"
       :key="previewItem.video_pid"
-      cols="1"
+      cols="12"
       md="4"
+      lg="3"
+      xl="2"
       class="pa-1"
     >
       <a :href="'/video/'+previewItem.video_pid">
