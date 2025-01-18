@@ -16,6 +16,7 @@
           :video-name="previewItem.name"
           :age="previewItem.age"
           :duration="previewItem.duration"
+          :srt-ready="previewItem.srt_ready"
         />
       </a>
       <div

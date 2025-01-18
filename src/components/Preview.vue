@@ -22,6 +22,10 @@ const props = defineProps({
     type: Number,
     required: true
   },
+  srtReady:{
+    type: Boolean,
+    required: true
+  }
 })
 
 const imageUrl = computed(() => {
@@ -89,7 +93,17 @@ const onTimeUpdated = () => {
           :aspect-ratio="1"
           class="ma-0 pa-0 photo-container"
         />
-        <div class="position-absolute bottom-0 right-0">
+        <div class="position-absolute bottom-0 right-0 pr-2">
+          <v-chip
+            v-if="props.srtReady"
+            text="字幕"
+            label
+            color="blue-grey"
+            variant="flat"
+            size="large"
+            class="opacity-80 text-black ma-2 px-4 py-0"
+            prepend-icon="mdi-subtitles-outline"
+          />
           <v-chip
             :text="age"
             label
@@ -121,6 +135,6 @@ video {
 
 .photo-container {
   /* 定义渐变蓝背景 */
-  background: linear-gradient(135deg, #1E90FF, #87CEEB);
+  background: linear-gradient(135deg, #1E90FF, #cdd7dc);
 }
 </style>
