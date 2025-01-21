@@ -1,5 +1,6 @@
 <script setup>
 import {computed, ref} from "vue";
+import {useDisplay} from "vuetify";
 
 const props = defineProps({
   facePid: {
@@ -22,7 +23,7 @@ const props = defineProps({
     type: Number,
     required: true
   },
-  srtReady:{
+  srtReady: {
     type: Boolean,
     required: true
   }
@@ -47,6 +48,11 @@ const duration = computed(() => {
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
   return `${hours.toString()}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+})
+
+const display = useDisplay()
+const detailedClip = computed(() => {
+  return display.smAndUp.value
 })
 
 const videoPlayer = ref(null)
@@ -100,27 +106,27 @@ const onTimeUpdated = () => {
             label
             color="blue-grey"
             variant="flat"
-            size="large"
-            class="opacity-80 text-black ma-2 px-4 py-0"
-            prepend-icon="mdi-subtitles-outline"
+            :size="detailedClip?'large':'middle'"
+            class="opacity-80 text-black ma-2 px-2 py-0"
+            :prepend-icon="detailedClip?'mdi-subtitles-outline':''"
           />
           <v-chip
             :text="age"
             label
             color="blue-grey"
             variant="flat"
-            size="large"
-            class="opacity-80 text-black ma-2 px-4 py-0"
-            prepend-icon="mdi-cake-variant-outline"
+            :size="detailedClip?'large':'middle'"
+            class="opacity-80 text-black ma-2 px-2 py-0"
+            :prepend-icon="detailedClip?'mdi-cake-variant-outline':''"
           />
           <v-chip
             :text="duration"
             label
             color="blue-grey"
             variant="flat"
-            size="large"
-            class="opacity-80 text-black ma-2 px-4 py-0"
-            prepend-icon="mdi-clock-outline"
+            :size="detailedClip?'large':'middle'"
+            class="opacity-80 text-black ma-2 px-2 py-0"
+            :prepend-icon="detailedClip?'mdi-clock-outline':''"
           />
         </div>
       </v-responsive>
