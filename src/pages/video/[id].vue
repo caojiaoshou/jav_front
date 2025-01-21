@@ -67,53 +67,47 @@ const seekToTime = (time) => {
 }
 
 const display = useDisplay();
-
+const viewPortRemain = computed(() => display.height.value - 68)
 </script>
 
 <template>
   <v-row no-gutters>
-    <v-col cols="9">
-      <video
-        ref="videoPlayer"
-        :src="videoUrl"
-        controls
-        preload="metadata"
-        width="100%"
-        :poster="posterImage"
-        controlslist="nodownload"
+    <v-col cols="2">
+      <v-virtual-scroll
+        :height="viewPortRemain"
+        :items="sceneArray"
       >
-        <track
-          :src="vtt"
-          kind="subtitles"
-          default
+        <template #default="{ item:scene }">
+          <v-img
+            :src="scene.preview"
+            @click="seekToTime(scene.ts)"
+          />
+        </template>
+      </v-virtual-scroll>
+    </v-col>
+    <v-col cols="8">
+      <v-sheet class="fill-height  align-content-center">
+        <video
+          ref="videoPlayer"
+          :src="videoUrl"
+          controls
+          preload="metadata"
+          width="100%"
+          :poster="posterImage"
+          controlslist="nodownload"
         >
-      </video>
-      <v-sheet
-        width="100%"
-      >
-        <v-slide-group
-          show-arrows
-          class="fill-height"
-        >
-          <v-slide-group-item v-for="scene in sceneArray">
-            <v-card class="mx-2 my-0 pa-0">
-              <v-card-text class="ma-0 pa-0">
-                <v-img
-                  min-width="15vw"
-                  :src="scene.preview"
-                  @click="seekToTime(scene.ts)"
-                />
-              </v-card-text>
-            </v-card>
-          </v-slide-group-item>
-        </v-slide-group>
+          <track
+            :src="vtt"
+            kind="subtitles"
+            default
+          >
+        </video>
       </v-sheet>
     </v-col>
-    <v-col cols="3">
+    <v-col cols="2">
       <v-virtual-scroll
-        height="100vh"
+        :height="viewPortRemain"
         :items="srtArray"
-        item-height="2rem"
       >
         <template #default="{ item: srtItem }">
           <v-list-item
