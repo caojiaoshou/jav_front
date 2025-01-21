@@ -31,7 +31,6 @@ const selectedLangArray = ref([])
 const vtt = computed(() => {
   if (vttLangArray.value.length > 0 && selectedLangArray.value.length > 0) {
     const vttInText = convertSrtItemToWebVTT(srtArray.value, selectedLangArray.value)
-    console.log(vttInText)
     const vttInB64 = URL.createObjectURL(new Blob([vttInText], {type: 'text/vtt'}))
     return vttInB64
   } else {
@@ -68,14 +67,12 @@ const seekToTime = (time) => {
 }
 
 const display = useDisplay();
-const boxWidth = computed(() => {
-  return display.lgAndUp.value ? '70vw' : '100vw'
-});
+
 </script>
 
 <template>
-  <v-container class="d-flex align-center">
-    <v-responsive :width="boxWidth">
+  <v-row no-gutters>
+    <v-col cols="9">
       <video
         ref="videoPlayer"
         :src="videoUrl"
@@ -91,28 +88,47 @@ const boxWidth = computed(() => {
           default
         >
       </video>
-      <div>
-        <div v-for="srtItem in srtArray">
-          <div @click="seekToTime(srtItem.start_at)">
-            <span>{{ srtItem.texts[0].text }}</span>
-            <span>{{ srtItem.texts[1].text }}</span>
-          </div>
-        </div>
-      </div>
-      <v-row>
-        <v-col
-          v-for="scene in sceneArray"
-          :key="scene.ts"
-          cols="2"
+      <v-sheet
+        width="100%"
+      >
+        <v-slide-group
+          show-arrows
+          class="fill-height"
         >
-          <v-img
-            :src="scene.preview"
-            @click="seekToTime(scene.ts)"
-          />
-        </v-col>
-      </v-row>
-    </v-responsive>
-  </v-container>
+          <v-slide-group-item v-for="scene in sceneArray">
+            <v-card class="mx-2 my-0 pa-0">
+              <v-card-text class="ma-0 pa-0">
+                <v-img
+                  min-width="15vw"
+                  :src="scene.preview"
+                  @click="seekToTime(scene.ts)"
+                />
+              </v-card-text>
+            </v-card>
+          </v-slide-group-item>
+        </v-slide-group>
+      </v-sheet>
+    </v-col>
+    <v-col cols="3">
+      <v-virtual-scroll
+        height="100vh"
+        :items="srtArray"
+        item-height="2rem"
+      >
+        <template #default="{ item: srtItem }">
+          <v-list-item
+            lines="one"
+            @click="seekToTime(srtItem.start_at)"
+          >
+            <v-list-item-title>{{ srtItem.texts[0].text }}</v-list-item-title>
+            <v-list-item-subtitle v-if="srtItem.texts.length > 1">
+              {{ srtItem.texts[1].text }}
+            </v-list-item-subtitle>
+          </v-list-item>
+        </template>
+      </v-virtual-scroll>
+    </v-col>
+  </v-row>
 </template>
 
 <style scoped>
