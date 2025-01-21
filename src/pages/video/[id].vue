@@ -76,9 +76,11 @@ const viewPortRemain = computed(() => display.height.value - 68)
       <v-virtual-scroll
         :height="viewPortRemain"
         :items="sceneArray"
+        class="rtl-scroller pr-4"
       >
         <template #default="{ item:scene }">
           <v-img
+            class="rounded-lg mb-2"
             :src="scene.preview"
             @click="seekToTime(scene.ts)"
           />
@@ -126,5 +128,7 @@ const viewPortRemain = computed(() => display.height.value - 68)
 </template>
 
 <style scoped>
-
+.rtl-scroller {
+  direction: rtl;
+}
 </style>
