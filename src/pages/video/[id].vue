@@ -2,7 +2,7 @@
 import {useRoute} from "vue-router";
 import {computed, onMounted, ref} from 'vue';
 import axios from 'axios';
-import {useDisplay} from "vuetify";
+import {useDate, useDisplay} from "vuetify";
 import {convertSrtItemToWebVTT} from '@/utils/subtitle.js'
 
 const route = useRoute();
@@ -37,6 +37,10 @@ const vtt = computed(() => {
     return null
   }
 })
+
+const videoTitle = ref(null)
+const videoCreateAt = ref(null)
+const dateFunc = useDate()
 const fetchMeta = async () => {
   const response = await axios.post('/api/video-ts', {video_pid: pageID});
   // 引入预览
@@ -49,6 +53,10 @@ const fetchMeta = async () => {
     vttLangArray.value = allLang
     selectedLangArray.value = allLang
   }
+
+  // 引入标题
+  videoTitle.value = response.data.video_name
+  videoCreateAt.value = dateFunc.format(response.data.video_create_at, 'keyboardDateTime')
 };
 
 onMounted(fetchMeta);
@@ -79,31 +87,48 @@ const viewPortRemain = computed(() => display.height.value - 68)
         class="rtl-scroller pr-4"
       >
         <template #default="{ item:scene }">
-          <v-img
-            class="rounded-lg mb-2"
-            :src="scene.preview"
-            @click="seekToTime(scene.ts)"
-          />
+          <v-responsive class="position-relative">
+            <v-img
+              class="rounded-lg mb-2"
+              :src="scene.preview"
+              @click="seekToTime(scene.ts)"
+            />
+            <v-chip
+              :text="scene.reason.toUpperCase()"
+              label
+              color="blue-grey"
+              variant="flat"
+              class="opacity-70 text-black mb-4 mr-2 px-2 py-0 position-absolute bottom-0 right-0"
+            />
+          </v-responsive>
         </template>
       </v-virtual-scroll>
     </v-col>
     <v-col cols="8">
-      <v-sheet class="fill-height  align-content-center">
-        <video
-          ref="videoPlayer"
-          :src="videoUrl"
-          controls
-          preload="metadata"
-          width="100%"
-          :poster="posterImage"
-          controlslist="nodownload"
-        >
-          <track
-            :src="vtt"
-            kind="subtitles"
-            default
+      <v-sheet>
+        <div class="text-h4 mx-2 py-2">
+          {{ videoTitle }}
+        </div>
+        <div class="text-subtitle-1 mx-2 py-2">
+          {{ videoCreateAt }}
+        </div>
+        <div class="mt-8">
+          <video
+            ref="videoPlayer"
+            :src="videoUrl"
+            controls
+            preload="metadata"
+            width="100%"
+            :poster="posterImage"
+            controlslist="nodownload"
           >
-        </video>
+            <track
+              :src="vtt"
+              kind="subtitles"
+              default
+            >
+          </video>
+        </div>
       </v-sheet>
     </v-col>
     <v-col cols="2">
