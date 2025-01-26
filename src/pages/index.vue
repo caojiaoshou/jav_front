@@ -8,16 +8,16 @@
       lg="3"
       class="pa-1"
     >
-      <a :href="'/video/'+previewItem.video_pid">
-        <preview
-          :face-pid="previewItem.face_pid"
-          :quick-look-pid="previewItem.quick_look_pid"
-          :video-name="previewItem.name"
-          :age="previewItem.age"
-          :duration="previewItem.duration"
-          :srt-ready="previewItem.srt_ready"
-        />
-      </a>
+      <preview
+        :face-pid="previewItem.face_pid"
+        :quick-look-pid="previewItem.quick_look_pid"
+        :video-name="previewItem.name"
+        :age="previewItem.age"
+        :duration="previewItem.duration"
+        :srt-ready="previewItem.srt_ready"
+        :create-at="previewItem.create_at"
+        @click-major="onPreviewClicked(previewItem.video_pid)"
+      />
       <div
         v-if="previewIndex >= previewArray.length-3"
         v-intersect="onIntersect"
@@ -30,6 +30,7 @@
 import Preview from "@/components/Preview.vue";
 import {onMounted, ref} from 'vue'
 import axios from "axios";
+import {useRouter} from 'vue-router'
 
 const previewArray = ref([])
 const loadBatchSize = ref(20)
@@ -60,5 +61,11 @@ const onIntersect = (entry) => {
   if (entry && !pageLoading.value && !exhaustedMark.value) {
     fetcher()
   }
+}
+
+const router = useRouter()
+const onPreviewClicked = (videoPid) => {
+  const href = '/video/' + videoPid
+  router.push(href)
 }
 </script>

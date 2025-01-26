@@ -1,6 +1,8 @@
 <script setup>
-import {computed, ref} from "vue";
-import {useDisplay} from "vuetify";
+import {computed, defineEmits, ref} from "vue";
+import {useDate, useDisplay} from "vuetify";
+
+const emits = defineEmits(['click-major'])
 
 const props = defineProps({
   facePid: {
@@ -25,6 +27,10 @@ const props = defineProps({
   },
   srtReady: {
     type: Boolean,
+    required: true
+  },
+  createAt: {
+    type: String,
     required: true
   }
 })
@@ -55,14 +61,19 @@ const detailedClip = computed(() => {
   return display.smAndUp.value
 })
 
+const dateFunc = useDate()
+const videoCreateAt = computed(() => {
+  return dateFunc.format(props.createAt, 'keyboardDateTime')
+})
+
 const videoPlayer = ref(null)
 const videoDuration = ref(0)
 const videoCurrentTime = ref(0)
 
 
 const onTimeUpdated = () => {
-  videoCurrentTime.value = videoPlayer.value.currentTime
-  videoDuration.value = videoPlayer.value.duration
+  videoCurrentTime.value = videoPlayer.value?.currentTime
+  videoDuration.value = videoPlayer.value?.duration
 }
 </script>
 
@@ -73,6 +84,7 @@ const onTimeUpdated = () => {
         :aspect-ratio="1"
         v-bind="hoverState.props"
         class="position-relative"
+        @click="emits('click-major')"
       >
         <v-sheet
           v-if="hoverState.isHovering"
@@ -91,7 +103,12 @@ const onTimeUpdated = () => {
             autoplay
             @timeupdate="onTimeUpdated"
           />
-          <div>{{ props.videoName }}</div>
+          <div class="text-center text-h6 ma-2 text-wrap">
+            {{ props.videoName }}
+          </div>
+          <div class="text-end text-subtitle-2 my-2 mr-4">
+            {{ videoCreateAt }}
+          </div>
         </v-sheet>
         <v-img
           v-else
@@ -107,7 +124,7 @@ const onTimeUpdated = () => {
             color="blue-grey"
             variant="flat"
             :size="detailedClip?'large':'middle'"
-            class="opacity-80 text-black ma-2 px-2 py-0"
+            class="opacity-70 text-black ma-2 px-2 py-0"
             :prepend-icon="detailedClip?'mdi-subtitles-outline':''"
           />
           <v-chip
@@ -116,7 +133,7 @@ const onTimeUpdated = () => {
             color="blue-grey"
             variant="flat"
             :size="detailedClip?'large':'middle'"
-            class="opacity-80 text-black ma-2 px-2 py-0"
+            class="opacity-70 text-black ma-2 px-2 py-0"
             :prepend-icon="detailedClip?'mdi-cake-variant-outline':''"
           />
           <v-chip
@@ -125,7 +142,7 @@ const onTimeUpdated = () => {
             color="blue-grey"
             variant="flat"
             :size="detailedClip?'large':'middle'"
-            class="opacity-80 text-black ma-2 px-2 py-0"
+            class="opacity-70 text-black ma-2 px-2 py-0"
             :prepend-icon="detailedClip?'mdi-clock-outline':''"
           />
         </div>
