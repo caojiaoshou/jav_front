@@ -7,8 +7,8 @@
           @click="drawerModel=!drawerModel"
         />
       </template>
+
       <template #default>
-        <v-spacer />
         <v-text-field
           v-model="localModel"
           variant="underlined"
@@ -18,6 +18,30 @@
           hide-details
           max-width="300px"
           prepend-inner-icon="mdi-magnify"
+        />
+      </template>
+
+      <template #append>
+        <v-chip
+          label
+          small
+          :text="previewCount.toLocaleString()"
+          prepend-icon="mdi-video-outline"
+          class="mr-1"
+        />
+        <v-chip
+          label
+          small
+          :text="srtCount.toLocaleString()"
+          prepend-icon="mdi-subtitles-outline"
+          class="mx-1"
+        />
+        <v-chip
+          label
+          small
+          :text="videoHours.toLocaleString()"
+          prepend-icon="mdi-clock-outline"
+          class="ml-1"
         />
       </template>
     </v-app-bar>
@@ -81,9 +105,10 @@
 </template>
 
 <script setup>
-import {computed, ref} from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import {useDisplay} from "vuetify";
 import {useGlobalFilter, useGlobalPwd, useLocalHistory, useSnackbar} from "@/stores/app.js";
+import axios from "axios";
 
 const display = useDisplay()
 const drawerModel = ref(!display.mobile.value)
@@ -141,5 +166,16 @@ const localModel = computed({
   }
 })
 
-
+const previewCount = ref(0)
+const srtCount = ref(0)
+const videoCount = ref(0)
+const videoHours = ref(0.0)
+const fetchSummary = async () => {
+  const response = await axios.post('/api/summary')
+  previewCount.value = response.data.preview_count
+  srtCount.value = response.data.srt_count
+  videoCount.value = response.data.video_count
+  videoHours.value = Math.round(response.data.total_duration_hour)
+}
+onMounted(fetchSummary)
 </script>
