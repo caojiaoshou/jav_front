@@ -73,8 +73,10 @@ const videoUrl = computed(() => {
 });
 
 const videoPlayer = ref(null);
-
-
+const currentTime = ref(0)
+const onTimeUpdated = () => {
+  currentTime.value = videoPlayer.value.currentTime
+}
 const seekToTime = (time) => {
   if (videoPlayer.value) {
     videoPlayer.value.currentTime = time;
@@ -97,7 +99,7 @@ const viewPortRemain = computed(() => display.height.value - 68)
         class="rtl-scroller pr-4"
       >
         <template #default="{ item:scene }">
-          <v-responsive class="position-relative">
+          <v-responsive :class="scene.ts < currentTime? 'opacity-50 position-relative' : 'position-relative'">
             <v-img
               class="rounded-lg mb-2"
               :src="scene.preview"
@@ -132,6 +134,7 @@ const viewPortRemain = computed(() => display.height.value - 68)
             :poster="posterImage"
             controlslist="nodownload"
             @play="logPlay"
+            @timeupdate="onTimeUpdated"
           >
             <track
               :src="vtt"
@@ -149,6 +152,7 @@ const viewPortRemain = computed(() => display.height.value - 68)
       >
         <template #default="{ item: srtItem }">
           <v-list-item
+            :class="srtItem.end_at < currentTime?'opacity-50':''"
             lines="one"
             @click="seekToTime(srtItem.start_at)"
           >
