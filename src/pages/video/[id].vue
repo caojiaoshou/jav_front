@@ -1,12 +1,13 @@
 <script setup>
 import {useRoute} from "vue-router";
-import {computed, onMounted, ref} from 'vue';
+import {computed, ref, watch} from 'vue';
 import axios from 'axios';
 import {useDate, useDisplay} from "vuetify";
 import {convertSrtItemToWebVTT} from '@/utils/subtitle.js'
+import {useLocalHistory} from "@/stores/app.js";
 
 const route = useRoute();
-const pageID = route.params.id;
+
 
 const sceneArray = ref([]);
 
@@ -38,11 +39,13 @@ const vtt = computed(() => {
   }
 })
 
+const localHistory = useLocalHistory();
+
 const videoTitle = ref(null)
 const videoCreateAt = ref(null)
 const dateFunc = useDate()
 const fetchMeta = async () => {
-  const response = await axios.post('/api/video-ts', {video_pid: pageID});
+  const response = await axios.post('/api/video-ts', {video_pid: route.params.id});
   // 引入预览
   sceneArray.value = response.data.ts_list;
 
@@ -55,14 +58,18 @@ const fetchMeta = async () => {
   }
 
   // 引入标题
-  videoTitle.value = response.data.video_name
-  videoCreateAt.value = dateFunc.format(response.data.video_create_at, 'keyboardDateTime')
+  const {video_name, video_create_at} = response.data;
+  videoTitle.value = video_name
+  videoCreateAt.value = dateFunc.format(video_create_at, 'keyboardDateTime')
+
+  // 添加历史记录
+  localHistory.add(route.params.id, video_name, 'loaded')
 };
 
-onMounted(fetchMeta);
-
+// onMounted(fetchMeta);
+watch(() => route.params.id, fetchMeta, {immediate: true})
 const videoUrl = computed(() => {
-  return `/api/video-full/${pageID}`;
+  return `/api/video-full/${route.params.id}`;
 });
 
 const videoPlayer = ref(null);
@@ -74,6 +81,9 @@ const seekToTime = (time) => {
   }
 }
 
+const logPlay = () => {
+  localHistory.add(route.params.id, videoTitle.value, 'played')
+}
 const display = useDisplay();
 const viewPortRemain = computed(() => display.height.value - 68)
 </script>
@@ -121,6 +131,7 @@ const viewPortRemain = computed(() => display.height.value - 68)
             width="100%"
             :poster="posterImage"
             controlslist="nodownload"
+            @play="logPlay"
           >
             <track
               :src="vtt"

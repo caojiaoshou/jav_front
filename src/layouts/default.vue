@@ -29,10 +29,10 @@
         <v-list-item
           v-if="!!item.url"
           :key="item.url"
-          class="pl-8"
+          class="pl-8  text-wrap"
           link
           :to="item.url"
-          lines="two"
+          lines="one"
           :title="item.text"
         />
         <v-list-item
@@ -41,7 +41,7 @@
           :subtitle="item.text"
           type="subheader"
           class="border-t"
-          lines="two"
+          lines="one"
         />
       </template>
 
@@ -83,15 +83,28 @@
 <script setup>
 import {computed, ref} from 'vue'
 import {useDisplay} from "vuetify";
-import {useGlobalFilter, useGlobalPwd, useSnackbar} from "@/stores/app.js";
+import {useGlobalFilter, useGlobalPwd, useLocalHistory, useSnackbar} from "@/stores/app.js";
 
 const display = useDisplay()
 const drawerModel = ref(!display.mobile.value)
-const pageConfig = [
+
+const pageConfigStatic = [
   {'text': '页面'},
   {'text': '全部视频', 'url': '/'},
   {'text': '历史'},
 ]
+
+const localHistory = useLocalHistory()
+const pageConfig = computed(() => {
+  const res = [...pageConfigStatic]
+
+  localHistory.groupedHistory.slice(0, 20).forEach(item => {
+    res.push({text: item.videoName, url: '/video/' + item.videoPid})
+  })
+
+  return res
+})
+
 const snackbar = useSnackbar()
 const snackbarModel = computed(
   {

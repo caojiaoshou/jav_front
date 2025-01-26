@@ -1,6 +1,7 @@
 // Utilities
 import {defineStore} from 'pinia'
 import {SHA256} from "crypto-es/lib/sha256";
+import {groupBy, maxBy, reverse, sortBy} from "lodash";
 import Cookie from 'js-cookie';
 
 export const useAppStore = defineStore('app', {
@@ -66,6 +67,41 @@ export const useSnackbar = defineStore('snackbar', {
     },
     setShow(value) {
       this.show = value
+    }
+  }
+})
+
+export const useLocalHistory = defineStore('local-history', {
+  state: () => ({
+    storage: [],
+    maxSize: 200,
+  }),
+  persist: true,
+  actions: {
+    add(videoPid, videoName, event) {
+      const item = {
+        videoName: videoName,
+        videoPid: videoPid,
+        time: new Date().getTime(),
+        event: event
+      }
+      this.storage.push(item)
+      if (this.storage.length > this.maxSize) {
+        this.storage.shift()
+      }
+    },
+    clear() {
+      this.storage.clear()
+    }
+  },
+  getters: {
+    groupedHistory(state) {
+      return reverse(
+        sortBy(
+          Object.values(groupBy(state.storage, 'videoPid')).map(group => maxBy(group, 'time')),
+          'time'
+        )
+      )
     }
   }
 })
