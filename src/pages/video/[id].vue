@@ -130,19 +130,11 @@ const tabHeight = computed(() => {
           <div class="text-h4 mx-2 py-2">
             {{ videoTitle }}
           </div>
-          <div class="text-subtitle-1 mx-2 py-2 mb-6">
+          <div class="text-subtitle-1 mx-2 py-2 mb-8">
             {{ videoCreateAt }}
           </div>
         </template>
-        <template v-else>
-          <div class="text-h6 overflow-hidden">
-            {{ videoTitle }}
-          </div>
-          <div class="text-subtitle-2 overflow-hidden">
-            {{ videoCreateAt }}
-          </div>
-        </template>
-        <div class="mt-2">
+        <div>
           <video
             ref="videoPlayer"
             :src="videoUrl"
@@ -187,6 +179,10 @@ const tabHeight = computed(() => {
           color="primary"
         >
           <v-tab
+            text="信息"
+            value="info"
+          />
+          <v-tab
             text="预览"
             value="preview"
           />
@@ -196,12 +192,20 @@ const tabHeight = computed(() => {
           />
         </v-tabs>
         <v-tabs-window v-model="tabModel">
+          <v-tabs-window-item value="info">
+            <div class="text-h4 mx-2 py-2">
+              {{ videoTitle }}
+            </div>
+            <div class="text-subtitle-1 mx-2 py-2 mb-8">
+              {{ videoCreateAt }}
+            </div>
+          </v-tabs-window-item>
           <v-tabs-window-item value="preview">
             <preview-selector
               :height="tabHeight"
               :items="sceneArray"
               :current-time="currentTime"
-              :col-count="2"
+              :col-count="display.mdAndUp?3:2"
               @select-time="seekToTime"
             />
           </v-tabs-window-item>
