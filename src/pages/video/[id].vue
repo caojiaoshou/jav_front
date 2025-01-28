@@ -5,6 +5,8 @@ import axios from 'axios';
 import {useDate, useDisplay} from "vuetify";
 import {convertSrtItemToWebVTT} from '@/utils/subtitle.js'
 import {useLocalHistory} from "@/stores/app.js";
+import SrtSelector from "@/pages/video/SrtSelector.vue";
+import PreviewSelector from "@/pages/video/PreviewSelector.vue";
 
 const route = useRoute();
 
@@ -93,28 +95,13 @@ const viewPortRemain = computed(() => display.height.value - 68)
 <template>
   <v-row no-gutters>
     <v-col cols="2">
-      <v-virtual-scroll
+      <preview-selector
+        class="rtl-scroller"
         :height="viewPortRemain"
         :items="sceneArray"
-        class="rtl-scroller pr-4"
-      >
-        <template #default="{ item:scene }">
-          <v-responsive :class="scene.ts < currentTime? 'opacity-50 position-relative' : 'position-relative'">
-            <v-img
-              class="rounded-lg mb-2"
-              :src="scene.preview"
-              @click="seekToTime(scene.ts)"
-            />
-            <v-chip
-              :text="scene.reason.toUpperCase()"
-              label
-              color="blue-grey"
-              variant="flat"
-              class="opacity-70 text-black mb-4 mr-2 px-2 py-0 position-absolute bottom-0 right-0"
-            />
-          </v-responsive>
-        </template>
-      </v-virtual-scroll>
+        :current-time="currentTime"
+        @select-time="seekToTime"
+      />
     </v-col>
     <v-col cols="8">
       <v-sheet>
@@ -146,23 +133,12 @@ const viewPortRemain = computed(() => display.height.value - 68)
       </v-sheet>
     </v-col>
     <v-col cols="2">
-      <v-virtual-scroll
+      <srt-selector
         :height="viewPortRemain"
         :items="srtArray"
-      >
-        <template #default="{ item: srtItem }">
-          <v-list-item
-            :class="srtItem.end_at < currentTime?'opacity-50':''"
-            lines="one"
-            @click="seekToTime(srtItem.start_at)"
-          >
-            <v-list-item-title>{{ srtItem.texts[0].text }}</v-list-item-title>
-            <v-list-item-subtitle v-if="srtItem.texts.length > 1">
-              {{ srtItem.texts[1].text }}
-            </v-list-item-subtitle>
-          </v-list-item>
-        </template>
-      </v-virtual-scroll>
+        :current-time="currentTime"
+        @select-time="seekToTime"
+      />
     </v-col>
   </v-row>
 </template>
