@@ -1,5 +1,5 @@
 <script setup>
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {computed, ref, watch} from 'vue';
 import axios from 'axios';
 import {useDate, useDisplay} from "vuetify";
@@ -7,8 +7,7 @@ import {convertSrtItemToWebVTT} from '@/utils/subtitle.js'
 import {useLocalHistory} from "@/stores/app.js";
 import SrtSelector from "@/pages/video/SrtSelector.vue";
 import PreviewSelector from "@/pages/video/PreviewSelector.vue";
-
-const route = useRoute();
+import Preview from "@/components/Preview.vue";
 
 
 const sceneArray = ref([]);
@@ -45,7 +44,12 @@ const localHistory = useLocalHistory();
 
 const videoTitle = ref(null)
 const videoCreateAt = ref(null)
+
+
+const recommendedArray = ref(null)
+
 const dateFunc = useDate()
+const route = useRoute();
 const fetchMeta = async () => {
   const response = await axios.post('/api/video-ts', {video_pid: route.params.id});
   // 引入预览
@@ -63,6 +67,9 @@ const fetchMeta = async () => {
   const {video_name, video_create_at} = response.data;
   videoTitle.value = video_name
   videoCreateAt.value = dateFunc.format(video_create_at, 'keyboardDateTime')
+
+  // 引入猜你喜欢
+  recommendedArray.value = [...response.data.same_group, ...response.data.face_similar]
 
   // 添加历史记录
   localHistory.add(route.params.id, video_name, 'loaded')
@@ -95,6 +102,12 @@ const widthFirstScreen = computed(() => {
 
 const viewPortRemain = computed(() => display.height.value - 68)
 
+// 推荐跳转
+const router = useRouter()
+const onPreviewClicked = (videoPid) => {
+  const href = '/video/' + videoPid
+  router.push(href)
+}
 // 非desktop控制
 const tabModel = ref(null)
 const tabWindow = ref(null)
@@ -106,7 +119,9 @@ const tabHeight = computed(() => {
     return 0
   }
 })
-
+const imageColCount = computed(() => {
+  return display.mdAndUp.value ? 3 : 2
+})
 </script>
 
 <template>
@@ -199,13 +214,32 @@ const tabHeight = computed(() => {
             <div class="text-subtitle-1 mx-2 py-2 mb-8">
               {{ videoCreateAt }}
             </div>
+
+            <v-row no-gutters>
+              <v-col
+                v-for="recommendedItem in recommendedArray"
+                :cols="12 / imageColCount"
+                class="pa-1"
+              >
+                <preview
+                  :face-pid="recommendedItem.face_pid"
+                  :quick-look-pid="recommendedItem.quick_look_pid"
+                  :video-name="recommendedItem.name"
+                  :age="recommendedItem.age"
+                  :duration="recommendedItem.duration"
+                  :srt-ready="recommendedItem.srt_ready"
+                  :create-at="recommendedItem.create_at"
+                  @click-major="onPreviewClicked(recommendedItem.video_pid)"
+                />
+              </v-col>
+            </v-row>
           </v-tabs-window-item>
           <v-tabs-window-item value="preview">
             <preview-selector
               :height="tabHeight"
               :items="sceneArray"
               :current-time="currentTime"
-              :col-count="display.mdAndUp?3:2"
+              :col-count="imageColCount"
               @select-time="seekToTime"
             />
           </v-tabs-window-item>
