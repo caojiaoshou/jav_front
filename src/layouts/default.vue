@@ -83,7 +83,7 @@
       </template>
     </v-navigation-drawer>
     <v-main class="my-1">
-      <router-view />
+      <router-view/>
     </v-main>
 
     <v-snackbar
@@ -106,12 +106,11 @@
 
 <script setup>
 import {computed, onMounted, ref} from 'vue'
-import {useDisplay} from "vuetify";
 import {useGlobalFilter, useGlobalPwd, useLocalHistory, useSnackbar} from "@/stores/app.js";
 import axios from "axios";
 
-const display = useDisplay()
-const drawerModel = ref(!display.mobile.value)
+
+const drawerModel = ref(false)
 
 const pageConfigStatic = [
   {'text': '页面'},
