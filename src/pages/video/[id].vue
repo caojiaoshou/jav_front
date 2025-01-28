@@ -89,12 +89,32 @@ const logPlay = () => {
   localHistory.add(route.params.id, videoTitle.value, 'played')
 }
 const display = useDisplay();
+const widthFirstScreen = computed(() => {
+  return display.width.value > display.height.value
+})
+
 const viewPortRemain = computed(() => display.height.value - 68)
+
+// 非desktop控制
+const tabModel = ref(null)
+const tabWindow = ref(null)
+
+const tabHeight = computed(() => {
+  if (tabWindow.value) {
+    return parseInt(display.height.value - tabWindow.value.getBoundingClientRect().y - 48)
+  } else {
+    return 0
+  }
+})
+
 </script>
 
 <template>
   <v-row no-gutters>
-    <v-col cols="2">
+    <v-col
+      v-if="widthFirstScreen"
+      cols="2"
+    >
       <preview-selector
         class="rtl-scroller"
         :height="viewPortRemain"
@@ -103,15 +123,25 @@ const viewPortRemain = computed(() => display.height.value - 68)
         @select-time="seekToTime"
       />
     </v-col>
-    <v-col cols="8">
+    <v-col :cols="widthFirstScreen?8:12">
       <v-sheet>
-        <div class="text-h4 mx-2 py-2">
-          {{ videoTitle }}
-        </div>
-        <div class="text-subtitle-1 mx-2 py-2">
-          {{ videoCreateAt }}
-        </div>
-        <div class="mt-8">
+        <template v-if="widthFirstScreen">
+          <div class="text-h4 mx-2 py-2">
+            {{ videoTitle }}
+          </div>
+          <div class="text-subtitle-1 mx-2 py-2 mb-6">
+            {{ videoCreateAt }}
+          </div>
+        </template>
+        <template v-else>
+          <div class="text-h6 overflow-hidden">
+            {{ videoTitle }}
+          </div>
+          <div class="text-subtitle-2 overflow-hidden">
+            {{ videoCreateAt }}
+          </div>
+        </template>
+        <div class="mt-2">
           <video
             ref="videoPlayer"
             :src="videoUrl"
@@ -132,13 +162,56 @@ const viewPortRemain = computed(() => display.height.value - 68)
         </div>
       </v-sheet>
     </v-col>
-    <v-col cols="2">
+    <v-col
+      v-if="widthFirstScreen"
+      cols="2"
+    >
       <srt-selector
         :height="viewPortRemain"
         :items="srtArray"
         :current-time="currentTime"
         @select-time="seekToTime"
       />
+    </v-col>
+    <v-col
+      v-if="!widthFirstScreen"
+      cols="12"
+    >
+      <div ref="tabWindow" />
+      <v-sheet class="fill-height">
+        <v-tabs
+          v-model="tabModel"
+          align-tabs="center"
+          fixed-tabs
+        >
+          <v-tab
+            text="预览"
+            value="preview"
+          />
+          <v-tab
+            text="字幕"
+            value="srt"
+          />
+        </v-tabs>
+        <v-tabs-window v-model="tabModel">
+          <v-tabs-window-item value="preview">
+            <preview-selector
+              :height="tabHeight"
+              :items="sceneArray"
+              :current-time="currentTime"
+              @select-time="seekToTime"
+            />
+          </v-tabs-window-item>
+          <v-tabs-window-item value="srt">
+            <srt-selector
+              :height="tabHeight"
+              :items="srtArray"
+              :current-time="currentTime"
+              @select-time="seekToTime"
+            />
+          </v-tabs-window-item>
+        </v-tabs-window>
+      </v-sheet>
     </v-col>
   </v-row>
 </template>
