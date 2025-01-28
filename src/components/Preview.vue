@@ -32,6 +32,10 @@ const props = defineProps({
   createAt: {
     type: String,
     required: true
+  },
+  styleBackground: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -39,6 +43,13 @@ const imageUrl = computed(() => {
   return `/api/face-image/${props.facePid}`
 })
 
+const imageClass = computed(() => {
+  let cStr = 'ma-0 pa-0'
+  if (props.styleBackground) {
+    cStr += ' photo-container'
+  }
+  return cStr
+})
 const videoUrl = computed(() => {
   return `/api/quick-look/${props.quickLookPid}`
 })
@@ -114,7 +125,7 @@ const onTimeUpdated = () => {
           v-else
           :src="imageUrl"
           :aspect-ratio="1"
-          class="ma-0 pa-0 photo-container"
+          :class="imageClass"
         />
         <div class="position-absolute bottom-0 right-0 pr-2">
           <v-chip

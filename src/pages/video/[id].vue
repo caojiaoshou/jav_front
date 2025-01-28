@@ -91,7 +91,20 @@ const seekToTime = (time) => {
     videoPlayer.value.currentTime = time;
   }
 }
-
+const videoCol = computed(() => {
+  if (widthFirstScreen.value) {
+    let base = 12
+    if (sceneArray.value.length > 0) {
+      base -= 2
+    }
+    if (srtArray.value.length > 0) {
+      base -= 2
+    }
+    return base
+  } else {
+    return 12
+  }
+})
 const logPlay = () => {
   localHistory.add(route.params.id, videoTitle.value, 'played')
 }
@@ -139,13 +152,13 @@ const imageColCount = computed(() => {
         @select-time="seekToTime"
       />
     </v-col>
-    <v-col :cols="widthFirstScreen?8:12">
+    <v-col :cols="videoCol">
       <v-sheet>
         <template v-if="widthFirstScreen">
           <div class="text-h4 mx-2 py-2">
             {{ videoTitle }}
           </div>
-          <div class="text-subtitle-1 mx-2 py-2 mb-8">
+          <div class="text-subtitle-1 mx-2 py-2 mb-2">
             {{ videoCreateAt }}
           </div>
         </template>
@@ -229,6 +242,7 @@ const imageColCount = computed(() => {
                   :duration="recommendedItem.duration"
                   :srt-ready="recommendedItem.srt_ready"
                   :create-at="recommendedItem.create_at"
+                  :style-background="false"
                   @click-major="onPreviewClicked(recommendedItem.video_pid)"
                 />
               </v-col>
@@ -255,6 +269,35 @@ const imageColCount = computed(() => {
       </v-sheet>
     </v-col>
   </v-row>
+
+  <template v-if="widthFirstScreen">
+    <div class="text-center text-h4 my-2 elevation-4">
+      相似视频
+    </div>
+    <v-row>
+      <v-col
+        v-for="recommendedItem in recommendedArray"
+        cols="6"
+        md="3"
+        lg="2"
+        class="pa-2"
+      >
+        <v-sheet class="elevation-4">
+          <preview
+            :face-pid="recommendedItem.face_pid"
+            :quick-look-pid="recommendedItem.quick_look_pid"
+            :video-name="recommendedItem.name"
+            :age="recommendedItem.age"
+            :duration="recommendedItem.duration"
+            :srt-ready="recommendedItem.srt_ready"
+            :create-at="recommendedItem.create_at"
+            :style-background="false"
+            @click-major="onPreviewClicked(recommendedItem.video_pid)"
+          />
+        </v-sheet>
+      </v-col>
+    </v-row>
+  </template>
 </template>
 
 <style scoped>
