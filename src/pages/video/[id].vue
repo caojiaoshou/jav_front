@@ -114,6 +114,7 @@ const tabHeight = computed(() => {
     <v-col
       v-if="widthFirstScreen"
       cols="2"
+      class="pr-4"
     >
       <preview-selector
         class="rtl-scroller"
@@ -183,6 +184,7 @@ const tabHeight = computed(() => {
           v-model="tabModel"
           align-tabs="center"
           fixed-tabs
+          color="primary"
         >
           <v-tab
             text="预览"
@@ -199,6 +201,7 @@ const tabHeight = computed(() => {
               :height="tabHeight"
               :items="sceneArray"
               :current-time="currentTime"
+              :col-count="2"
               @select-time="seekToTime"
             />
           </v-tabs-window-item>
