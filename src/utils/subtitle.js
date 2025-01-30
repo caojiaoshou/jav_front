@@ -2,8 +2,8 @@ export function convertSrtItemToWebVTT(subtitleArray, langArray) {
   let vttContent = "WEBVTT\n\n";
 
   subtitleArray.forEach((subtitle, index) => {
-    const startTime = _formatTime(subtitle.start_at);
-    const endTime = _formatTime(subtitle.end_at);
+    const startTime = formatTime(subtitle.start_at, true);
+    const endTime = formatTime(subtitle.end_at, true);
     vttContent += `${index + 1}\n`;
     vttContent += `${startTime} --> ${endTime}\n`;
 
@@ -19,11 +19,32 @@ export function convertSrtItemToWebVTT(subtitleArray, langArray) {
 }
 
 
-function _formatTime(seconds) {
+export function formatTime(seconds, withMilliseconds) {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   const secs = Math.floor(seconds % 60);
-  const milliseconds = Math.floor((seconds % 1) * 1000);
+  const milliseconds = Math.floor((seconds % 1) * 1000)
 
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${milliseconds.toString().padStart(3, '0')}`;
+  let res = ''
+  if (hours > 0) {
+    res += `${hours.toString()}:`
+  }
+  if (res) {
+    res += `${minutes.toString().padStart(2, '0')}:`
+  } else{
+    res += `${minutes.toString()}:`
+  }
+
+  if (res) {
+    res += `${secs.toString().padStart(2, '0')}`
+  } else {
+    res += `${secs.toString()}`
+  }
+
+  if (withMilliseconds) {
+    res += `.${milliseconds.toString().padStart(3, '0')}`
+  }
+
+  return res
+
 }

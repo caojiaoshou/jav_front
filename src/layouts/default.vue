@@ -115,6 +115,7 @@ const drawerModel = ref(false)
 const pageConfigStatic = [
   {'text': '页面'},
   {'text': '全部视频', 'url': '/'},
+  {'text': '控制面板', 'url': '/admin'},
   {'text': '历史'},
 ]
 
