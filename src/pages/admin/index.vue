@@ -3,6 +3,7 @@ import axios from 'axios'
 import {computed, ref} from 'vue'
 import {useDate, useDisplay} from "vuetify";
 import {formatTime} from "@/utils/subtitle.js";
+import {useGlobalFilter} from "@/stores/app.js";
 
 const enumNotStarted = 0
 const enumOfFinished = 2
@@ -76,8 +77,12 @@ const cols = [
   }
 ]
 
+const globalFilter = useGlobalFilter()
 const rows = computed(() => {
   return videoArray.value.filter(item => {
+    if (globalFilter.textValue && !item.video_name.includes(globalFilter.textValue)) {
+      return false
+    }
     if (noPreviewOnly.value && item.preview_state === enumOfFinished) {
       return false
     }
@@ -165,7 +170,7 @@ const createPreview = async (item) => {
     indeterminate
   />
 
-  <div ref="videoTableMark" />
+  <div ref="videoTableMark"/>
 
   <v-data-table-virtual
     :headers="cols"
