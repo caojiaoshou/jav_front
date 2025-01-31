@@ -170,7 +170,7 @@ const createPreview = async (item) => {
     indeterminate
   />
 
-  <div ref="videoTableMark"/>
+  <div ref="videoTableMark" />
 
   <v-data-table-virtual
     :headers="cols"
@@ -187,7 +187,7 @@ const createPreview = async (item) => {
       {{ formatDatetime(item.video_create_at) }}
     </template>
     <template #item.video_duration="{item}">
-      {{ formatTime(item.video_duration, false) }}
+      {{ formatTime(item.video_duration, false,false) }}
     </template>
     <template #item.preview_state="{item}">
       <template v-if="item.preview_state === enumOfFinished">
