@@ -1,5 +1,5 @@
 <script setup>
-import {useRoute, useRouter} from "vue-router";
+import {useRoute} from "vue-router";
 import {computed, ref, watch} from 'vue';
 import axios from 'axios';
 import {useDate, useDisplay} from "vuetify";
@@ -115,12 +115,7 @@ const widthFirstScreen = computed(() => {
 
 const viewPortRemain = computed(() => display.height.value - 68)
 
-// 推荐跳转
-const router = useRouter()
-const onPreviewClicked = (videoPid) => {
-  const href = '/video/' + videoPid
-  router.push(href)
-}
+
 // 非desktop控制
 const tabModel = ref(null)
 const tabWindow = ref(null)
@@ -234,17 +229,21 @@ const imageColCount = computed(() => {
                 :cols="12 / imageColCount"
                 class="pa-1"
               >
-                <preview
-                  :face-pid="recommendedItem.face_pid"
-                  :quick-look-pid="recommendedItem.quick_look_pid"
-                  :video-name="recommendedItem.name"
-                  :age="recommendedItem.age"
-                  :duration="recommendedItem.duration"
-                  :srt-ready="recommendedItem.srt_ready"
-                  :create-at="recommendedItem.create_at"
-                  :style-background="false"
-                  @click-major="onPreviewClicked(recommendedItem.video_pid)"
-                />
+                <a
+                  :href="'/video/' + recommendedItem.video_pid"
+                  target="_blank"
+                >
+                  <preview
+                    :face-pid="recommendedItem.face_pid"
+                    :quick-look-pid="recommendedItem.quick_look_pid"
+                    :video-name="recommendedItem.name"
+                    :age="recommendedItem.age"
+                    :duration="recommendedItem.duration"
+                    :srt-ready="recommendedItem.srt_ready"
+                    :create-at="recommendedItem.create_at"
+                    :style-background="false"
+                  />
+                </a>
               </v-col>
             </v-row>
           </v-tabs-window-item>
@@ -283,17 +282,21 @@ const imageColCount = computed(() => {
         class="pa-2"
       >
         <v-sheet class="elevation-4">
-          <preview
-            :face-pid="recommendedItem.face_pid"
-            :quick-look-pid="recommendedItem.quick_look_pid"
-            :video-name="recommendedItem.name"
-            :age="recommendedItem.age"
-            :duration="recommendedItem.duration"
-            :srt-ready="recommendedItem.srt_ready"
-            :create-at="recommendedItem.create_at"
-            :style-background="false"
-            @click-major="onPreviewClicked(recommendedItem.video_pid)"
-          />
+          <a
+            :href="'/video/' + preview.video_pid"
+            target="_blank"
+          >
+            <preview
+              :face-pid="recommendedItem.face_pid"
+              :quick-look-pid="recommendedItem.quick_look_pid"
+              :video-name="recommendedItem.name"
+              :age="recommendedItem.age"
+              :duration="recommendedItem.duration"
+              :srt-ready="recommendedItem.srt_ready"
+              :create-at="recommendedItem.create_at"
+              :style-background="false"
+            />
+          </a>
         </v-sheet>
       </v-col>
     </v-row>
@@ -303,5 +306,10 @@ const imageColCount = computed(() => {
 <style scoped>
 .rtl-scroller {
   direction: rtl;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
 }
 </style>

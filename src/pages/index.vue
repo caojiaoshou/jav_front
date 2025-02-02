@@ -8,16 +8,21 @@
       lg="3"
       class="pa-1"
     >
-      <preview
-        :face-pid="previewItem.face_pid"
-        :quick-look-pid="previewItem.quick_look_pid"
-        :video-name="previewItem.name"
-        :age="previewItem.age"
-        :duration="previewItem.duration"
-        :srt-ready="previewItem.srt_ready"
-        :create-at="previewItem.create_at"
-        @click-major="onPreviewClicked(previewItem.video_pid)"
-      />
+      <a
+        :href="'/video/' + previewItem.video_pid"
+        target="_blank"
+      >
+        <preview
+          :face-pid="previewItem.face_pid"
+          :quick-look-pid="previewItem.quick_look_pid"
+          :video-name="previewItem.name"
+          :age="previewItem.age"
+          :duration="previewItem.duration"
+          :srt-ready="previewItem.srt_ready"
+          :create-at="previewItem.create_at"
+        />
+      </a>
+
       <div
         v-if="previewIndex >= previewArray.length-3"
         v-intersect="onIntersect"
@@ -29,9 +34,8 @@
 
 <script setup>
 import Preview from "@/components/Preview.vue";
-import {onMounted, ref, watch} from 'vue'
+import {onMounted, ref, watch, computed} from 'vue'
 import axios from "axios";
-import {useRouter} from 'vue-router'
 import {useGlobalFilter} from "@/stores/app.js";
 
 const globalFilter = useGlobalFilter()
@@ -82,10 +86,11 @@ const onIntersect = (bEntryState) => {
     fetcher()
   }
 }
-
-const router = useRouter()
-const onPreviewClicked = (videoPid) => {
-  const href = '/video/' + videoPid
-  router.push(href)
-}
 </script>
+
+<style scoped>
+a {
+  text-decoration: none;
+  color: inherit;
+}
+</style>
