@@ -1,5 +1,8 @@
 <template>
-  <v-row no-gutters>
+  <v-row
+    no-gutters
+    class="mx-10"
+  >
     <v-col
       v-for="(previewItem,previewIndex) in filteredPreviews"
       :key="previewItem.video_pid"
@@ -34,7 +37,7 @@
 
 <script setup>
 import Preview from "@/components/Preview.vue";
-import {onMounted, ref, watch, computed} from 'vue'
+import {computed, onMounted, ref, watch} from 'vue'
 import axios from "axios";
 import {useGlobalFilter} from "@/stores/app.js";
 
