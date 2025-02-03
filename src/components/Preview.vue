@@ -135,7 +135,7 @@ const onTimeUpdated = () => {
             color="blue-grey"
             variant="flat"
             :size="detailedClip?'large':'middle'"
-            class="opacity-70 text-black ma-2 px-2 py-0"
+            class="opacity-70 text-black my-2 mx-1 px-2 py-0"
             :prepend-icon="detailedClip?'mdi-subtitles-outline':''"
           />
           <v-chip
@@ -144,7 +144,7 @@ const onTimeUpdated = () => {
             color="blue-grey"
             variant="flat"
             :size="detailedClip?'large':'middle'"
-            class="opacity-70 text-black ma-2 px-2 py-0"
+            class="opacity-70 text-black my-2 mx-1 px-2 py-0"
             :prepend-icon="detailedClip?'mdi-cake-variant-outline':''"
           />
           <v-chip
@@ -153,7 +153,7 @@ const onTimeUpdated = () => {
             color="blue-grey"
             variant="flat"
             :size="detailedClip?'large':'middle'"
-            class="opacity-70 text-black ma-2 px-2 py-0"
+            class="opacity-70 text-black my-2 mx-1 px-2 py-0"
             :prepend-icon="detailedClip?'mdi-clock-outline':''"
           />
         </div>

@@ -1,7 +1,7 @@
 <template>
   <v-row
     no-gutters
-    class="mx-10"
+    :class="mobileStyle?'':'mx-10'"
   >
     <v-col
       v-for="(previewItem,previewIndex) in filteredPreviews"
@@ -23,6 +23,7 @@
           :duration="previewItem.duration"
           :srt-ready="previewItem.srt_ready"
           :create-at="previewItem.create_at"
+          :style-background="!mobileStyle"
         />
       </a>
 
@@ -40,6 +41,7 @@ import Preview from "@/components/Preview.vue";
 import {computed, onMounted, ref, watch} from 'vue'
 import axios from "axios";
 import {useGlobalFilter} from "@/stores/app.js";
+import {useDisplay} from "vuetify";
 
 const globalFilter = useGlobalFilter()
 
@@ -89,6 +91,11 @@ const onIntersect = (bEntryState) => {
     fetcher()
   }
 }
+
+const display = useDisplay()
+const mobileStyle = computed(() => {
+  return display.mobile.value && display.width.value < 600
+})
 </script>
 
 <style scoped>
